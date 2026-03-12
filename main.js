@@ -47,7 +47,7 @@ const APPS_URL = "https://script.google.com/macros/s/AKfycbyUxXiJXAZ3i6oUZScBUY_
   // Fungsi Pindah Step - VERSI FINAL + AUTO LOCK TIMER & KUOTA
   async function go(step) {
     // Pengaturan Waktu Penutupan (Harus sama dengan di script timer)
-    const deadline = new Date("July 1, 2026 23:59:59").getTime();
+    const deadline = new Date("June 1, 2026 23:59:59").getTime();
     const sekarang = new Date().getTime();
     const waktuHabis = (deadline - sekarang) <= 0;
 
@@ -197,7 +197,7 @@ const APPS_URL = "https://script.google.com/macros/s/AKfycbyUxXiJXAZ3i6oUZScBUY_
 window.addEventListener('load', function() {
   fetch(APPS_URL).then(r => r.text()).then(t => {
     const pendaftar = parseInt(t);
-    const maxKuota = 0; 
+    const maxKuota = 72; 
     const sisa = maxKuota - pendaftar;
 
     if (document.getElementById('count-pendaftar')) document.getElementById('count-pendaftar').innerText = pendaftar;
@@ -575,3 +575,4 @@ function bukaSekarang() {
     document.body.style.height = '100vh';
 
   });
+
