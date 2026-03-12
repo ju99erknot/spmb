@@ -197,7 +197,7 @@ const APPS_URL = "https://script.google.com/macros/s/AKfycbyUxXiJXAZ3i6oUZScBUY_
 window.addEventListener('load', function() {
   fetch(APPS_URL).then(r => r.text()).then(t => {
     const pendaftar = parseInt(t);
-    const maxKuota = 72; 
+    const maxKuota = 0; 
     const sisa = maxKuota - pendaftar;
 
     if (document.getElementById('count-pendaftar')) document.getElementById('count-pendaftar').innerText = pendaftar;
