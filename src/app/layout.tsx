@@ -46,11 +46,20 @@ export const metadata: Metadata = {
     siteName: "SPMB SDN 02 Cibadak",
     locale: "id_ID",
     url: "https://spmb.sdn02cibadak.sch.id",
+    images: [
+      {
+        url: "/logo.png",
+        width: 800,
+        height: 600,
+        alt: "Logo SDN 02 Cibadak",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "SPMB Online - SDN 02 Cibadak",
     description: "Pendaftaran Siswa Baru Online SDN 02 Cibadak.",
+    images: ["/logo.png"],
   },
   icons: {
     icon: "/logo.png",
