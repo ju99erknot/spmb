@@ -53,8 +53,8 @@ export const metadata: Metadata = {
     description: "Pendaftaran Siswa Baru Online SDN 02 Cibadak.",
   },
   icons: {
-    icon: "/sdn02cbd.ico",
-    shortcut: "/sdn02cbd.ico",
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
     apple: "/logo.png",
   },
   metadataBase: new URL("https://spmb.sdn02cibadak.sch.id"),
