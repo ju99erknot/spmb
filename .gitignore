@@ -16,6 +16,7 @@
 # next.js
 /.next/
 /out/
+spmb-next/
 
 # production
 /build
