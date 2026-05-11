@@ -116,7 +116,7 @@ export default function HomePage() {
                 © 2026 SPMB <a href="https://www.sdn02cibadak.sch.id/" target="_blank" rel="noopener noreferrer" className="text-emerald-500 hover:text-emerald-400 transition-colors">SDN 02 Cibadak</a>. All rights reserved.
               </p>
               <p className="text-[10px] text-slate-300 mt-1">
-                Developed by <a href="https://ops.sdn02cibadak.sch.id/" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors font-medium">OPS SDN 02 Cibadak</a>
+                Developed by <a href="https://www.ju99erknot.my.id/" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors font-medium">@ju99erknot</a>
               </p>
             </footer>
           </motion.main>

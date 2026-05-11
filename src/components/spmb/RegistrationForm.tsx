@@ -177,8 +177,14 @@ export function RegistrationForm() {
             const lahir = new Date(tglLahir);
             const target = new Date("2026-07-01");
             let usia = target.getFullYear() - lahir.getFullYear();
-            const m = target.getMonth() - lahir.getMonth();
-            if (m < 0 || (m === 0 && target.getDate() < lahir.getDate())) { usia--; }
+            let m = target.getMonth() - lahir.getMonth();
+            if (target.getDate() < lahir.getDate()) {
+              m--;
+            }
+            if (m < 0) {
+              usia--;
+              m += 12;
+            }
             
             if (usia < 6) {
                 newErrors.tanggal_lahir = `Usia minimal 6 tahun per 1 Juli 2026. Usia anak saat ini: ${usia} tahun.`;

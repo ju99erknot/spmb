@@ -51,10 +51,16 @@ export function FormFieldComponent({
     const target = new Date("2026-07-01");
     let usia = target.getFullYear() - lahir.getFullYear();
     let m = target.getMonth() - lahir.getMonth();
-    if (m < 0 || (m === 0 && target.getDate() < lahir.getDate())) { 
-      usia--;
-      m = (m + 12) % 12;
+    
+    if (target.getDate() < lahir.getDate()) {
+      m--;
     }
+    
+    if (m < 0) {
+      usia--;
+      m += 12;
+    }
+
     ageInfo = `Umur per 1 Juli 2026: ${usia} Tahun ${m} Bulan`;
     if (usia < 6) {
       ageWarning = "Ananda berusia di bawah 6 tahun. Diwajibkan membawa surat rekomendasi Psikolog / Kepala TK saat daftar ulang.";

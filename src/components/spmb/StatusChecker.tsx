@@ -127,7 +127,7 @@ export function StatusChecker({ onSearchActive }: { onSearchActive?: (active: bo
 
 function ResultCard({ result, onReset }: { result: any; onReset: () => void }) {
   const status = result.status_pendaftaran?.toLowerCase() || "";
-  
+
   // Tahap 1 Defaults
   let warna = "#3b82f6"; // Blue
   let ikon = <FileText className="w-24 h-24 absolute -right-4 -top-4 opacity-20 rotate-12" />;
@@ -177,7 +177,7 @@ function ResultCard({ result, onReset }: { result: any; onReset: () => void }) {
         <div className="text-[10px] font-bold tracking-[2px] opacity-80 mb-1">STATUS PENDAFTARAN</div>
         <div className="text-[18px] font-extrabold tracking-[0.5px]">{judul}</div>
       </div>
-      
+
       <div className="p-[30px] text-center">
         {!isDiterima ? (
           <>
@@ -198,7 +198,7 @@ function ResultCard({ result, onReset }: { result: any; onReset: () => void }) {
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180px] opacity-[0.04] pointer-events-none">
                 <img src="/logo.png" alt="" className="w-full h-auto" />
               </div>
-              
+
               <div className="relative z-10">
                 <div className="text-center border-b-[3px] border-double border-slate-300 pb-3 mb-4">
                   <h2 className="m-0 text-[16px] font-black text-slate-800">PANITIA SPMB ONLINE 2026</h2>
@@ -216,13 +216,13 @@ function ResultCard({ result, onReset }: { result: any; onReset: () => void }) {
                     <span className="text-[10px] text-slate-400 font-bold tracking-widest block mb-1">NOMOR REGISTRASI:</span>
                     <b className="text-[20px] block text-emerald-500 leading-none tracking-tight">#{noReg}</b>
                   </div>
-                  
+
                   <div className="bg-amber-50 border border-amber-200 p-3 rounded-xl mb-4">
                     <span className="text-[11px] text-red-600 font-bold flex justify-center items-center gap-1.5 mb-1.5">
                       <Clock className="w-3.5 h-3.5" /> JADWAL DAFTAR ULANG:
                     </span>
-                    <b className="text-[13px] text-slate-800 block">Senin - Rabu, 16 - 18 Maret 2026</b>
-                    <span className="text-[10px] text-slate-500 mt-0.5 block">Pukul 08.00 - 12.00 WIB (Di Ruang Panitia)</span>
+                    <b className="text-[13px] text-slate-800 block">Selasa - Jumat, 02 - 05 Juni 2026</b>
+                    <span className="text-[10px] text-slate-500 mt-0.5 block">Pukul 08.00 - 10.00 WIB (Di Ruang Panitia)</span>
                   </div>
 
                   <div className="text-left border border-slate-200 p-0 text-[11px] leading-relaxed bg-white rounded-xl overflow-hidden shadow-sm mb-5">
@@ -275,14 +275,14 @@ function ResultCard({ result, onReset }: { result: any; onReset: () => void }) {
               <div style={{ color: step1 }} className="font-bold text-[12px] tracking-wide whitespace-nowrap">INPUT</div>
               <div className="text-[10px] text-slate-400 mt-0.5">Pendaftaran</div>
             </div>
-            
+
             {/* Step 2 */}
             <div className="text-center relative flex-1">
               <div style={{ backgroundColor: step2, boxShadow: glow2 }} className="w-11 h-11 rounded-full mx-auto mb-2.5 border-[3px] border-white flex items-center justify-center text-white font-extrabold text-sm transition-all duration-500">2</div>
               <div style={{ color: step2 }} className="font-bold text-[12px] tracking-wide whitespace-nowrap">VERIFIKASI</div>
               <div className="text-[10px] text-slate-400 mt-0.5">Validasi Data</div>
             </div>
-            
+
             {/* Step 3 */}
             <div className="text-center relative flex-1">
               <div style={{ backgroundColor: step3, boxShadow: glow3 }} className="w-11 h-11 rounded-full mx-auto mb-2.5 border-[3px] border-white flex items-center justify-center text-white font-extrabold text-sm transition-all duration-500">3</div>
