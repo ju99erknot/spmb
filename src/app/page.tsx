@@ -23,6 +23,17 @@ export default function HomePage() {
   const [nowMillis, setNowMillis] = useState(Date.now());
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [editData, setEditData] = useState<any>(null);
+  const [hasVerifParam, setHasVerifParam] = useState(false);
+
+  // Detect ?v= parameter from QR code scan
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("v")) {
+      setHasVerifParam(true);
+      setCurtainDismissed(true);
+      setShowContent(true);
+    }
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => setNowMillis(Date.now()), 1000);
@@ -71,7 +82,8 @@ export default function HomePage() {
   }
 
   // If not active, show the dark sci-fi StatusCurtain which blocks everything
-  if (portalStatus !== "ACTIVE") {
+  // BUT allow QR verification links (?v=) to bypass the curtain
+  if (portalStatus !== "ACTIVE" && !hasVerifParam) {
     return <StatusCurtain status={portalStatus} />;
   }
 

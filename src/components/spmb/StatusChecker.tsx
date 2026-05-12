@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,31 @@ export function StatusChecker({ onSearchActive, onEditData }: { onSearchActive?:
   const [isVerifyingEdit, setIsVerifyingEdit] = useState(false);
   const [verifyHp, setVerifyHp] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
+
+  // Auto-search when ?v=ID is detected (QR code scan)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const verifId = params.get("v");
+    if (verifId) {
+      setIsLoading(true);
+      setSearched(true);
+      if (onSearchActive) onSearchActive(true);
+      supabase
+        .from("pendaftar_dapodik")
+        .select("id, nama, nik, jk, status_pendaftaran, created_at")
+        .eq("id", verifId)
+        .limit(1)
+        .then(({ data, error }) => {
+          if (!error && data && data.length > 0) {
+            setResult(data[0]);
+            setQuery(data[0].nik || data[0].nama || "");
+          } else {
+            setResult(null);
+          }
+          setIsLoading(false);
+        });
+    }
+  }, []);
 
   const handleCheck = async () => {
     if (!query.trim()) return;
