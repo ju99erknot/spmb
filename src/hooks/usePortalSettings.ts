@@ -7,6 +7,7 @@ interface PortalSettings {
   jadwalBuka: string | null;
   jadwalTutup: string | null;
   maintenance: boolean;
+  editDataMandiri: boolean;
   isLoading: boolean;
 }
 
@@ -15,6 +16,7 @@ export function usePortalSettings() {
     jadwalBuka: null,
     jadwalTutup: null,
     maintenance: false,
+    editDataMandiri: false,
     isLoading: true,
   });
 
@@ -23,21 +25,23 @@ export function usePortalSettings() {
       const { data, error } = await supabase
         .from("pengaturan")
         .select("nama_setting, status")
-        .in("nama_setting", ["jadwal_buka", "jadwal_tutup", "maintenance"]);
+        .in("nama_setting", ["jadwal_buka", "jadwal_tutup", "maintenance", "edit_data_mandiri"]);
 
       if (error) throw error;
 
       let jadwalBuka = null;
       let jadwalTutup = null;
       let maintenance = false;
+      let editDataMandiri = false;
 
       data?.forEach((row) => {
         if (row.nama_setting === "jadwal_buka") jadwalBuka = row.status;
         if (row.nama_setting === "jadwal_tutup") jadwalTutup = row.status;
         if (row.nama_setting === "maintenance") maintenance = row.status === "ON";
+        if (row.nama_setting === "edit_data_mandiri") editDataMandiri = row.status === "ON";
       });
 
-      setSettings({ jadwalBuka, jadwalTutup, maintenance, isLoading: false });
+      setSettings({ jadwalBuka, jadwalTutup, maintenance, editDataMandiri, isLoading: false });
     } catch (err) {
       console.error("Failed to fetch settings:", err);
       setSettings((prev) => ({ ...prev, isLoading: false }));

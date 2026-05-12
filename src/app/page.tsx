@@ -109,7 +109,7 @@ export default function HomePage() {
             </div>
 
             {/* Status Checker */}
-            <StatusChecker onSearchActive={setIsSearchActive} onEditData={(data) => { setEditData(data); setIsSearchActive(false); }} />
+            <StatusChecker onSearchActive={setIsSearchActive} onEditData={(data) => { setEditData(data); setIsSearchActive(false); }} editEnabled={settings.editDataMandiri} />
 
             {/* Registration Form */}
             <div className={isSearchActive ? "hidden" : "block"}>

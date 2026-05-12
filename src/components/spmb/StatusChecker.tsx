@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, CheckCircle2, Clock, XCircle, Loader2, Trophy, FileText, Smartphone, Undo, Home } from "lucide-react";
 import { SuccessScreen } from "./registration-form/SuccessScreen";
 
-export function StatusChecker({ onSearchActive, onEditData }: { onSearchActive?: (active: boolean) => void, onEditData?: (data: any) => void }) {
+export function StatusChecker({ onSearchActive, onEditData, editEnabled }: { onSearchActive?: (active: boolean) => void, onEditData?: (data: any) => void, editEnabled?: boolean }) {
   const [query, setQuery] = useState("");
   const [result, setResult] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -186,7 +186,7 @@ export function StatusChecker({ onSearchActive, onEditData }: { onSearchActive?:
                     </div>
                   </div>
                 ) : (
-                  <ResultCard result={result} onReset={handleReset} onReprint={() => setIsReprinting(true)} onEdit={() => setIsVerifyingEdit(true)} />
+                  <ResultCard result={result} onReset={handleReset} onReprint={() => setIsReprinting(true)} onEdit={editEnabled ? () => setIsVerifyingEdit(true) : undefined} />
                 )
               ) : (
                 <div className="text-center p-6 bg-white rounded-[20px] border-2 border-dashed border-red-300 shadow-sm">
@@ -211,7 +211,7 @@ export function StatusChecker({ onSearchActive, onEditData }: { onSearchActive?:
   );
 }
 
-function ResultCard({ result, onReset, onReprint, onEdit }: { result: any; onReset: () => void; onReprint: () => void; onEdit: () => void }) {
+function ResultCard({ result, onReset, onReprint, onEdit }: { result: any; onReset: () => void; onReprint: () => void; onEdit?: () => void }) {
   const status = result.status_pendaftaran?.toLowerCase() || "";
 
   // Tahap 1 Defaults
@@ -400,9 +400,11 @@ function ResultCard({ result, onReset, onReprint, onEdit }: { result: any; onRes
         <button onClick={onReprint} className="flex flex-1 justify-center items-center gap-2 py-3 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold text-[13px] transition-colors shadow-sm cursor-pointer">
           <FileText className="w-4 h-4" /> Cetak Bukti
         </button>
-        <button onClick={onEdit} className="flex flex-1 justify-center items-center gap-2 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-[13px] transition-colors shadow-sm cursor-pointer">
-          <FileText className="w-4 h-4" /> Edit Data
-        </button>
+        {onEdit && (
+          <button onClick={onEdit} className="flex flex-1 justify-center items-center gap-2 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-[13px] transition-colors shadow-sm cursor-pointer">
+            <FileText className="w-4 h-4" /> Edit Data
+          </button>
+        )}
         <button onClick={() => window.location.reload()} className="flex flex-1 justify-center items-center gap-2 py-3 text-white rounded-xl font-bold text-[13px] transition-colors shadow-sm cursor-pointer" style={{ backgroundColor: warna }}>
           <Home className="w-4 h-4" /> Beranda
         </button>
