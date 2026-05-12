@@ -17,11 +17,13 @@ export function FormFieldComponent({
   value,
   error,
   onChange,
+  disabled,
 }: {
   field: FormField;
   value: string;
   error?: string;
   onChange: (val: string) => void;
+  disabled?: boolean;
 }) {
   const hasError = !!error;
   const isValid = value && value.trim() !== "" && !hasError;
@@ -89,6 +91,7 @@ export function FormFieldComponent({
         <span className="text-emerald-500">{field.icon}</span>
         {field.label}
         {field.required && <span className="text-red-400 text-xs">*</span>}
+        {disabled && <span className="text-[10px] bg-slate-200 text-slate-500 px-2 py-0.5 rounded-full font-bold">🔒 Terkunci</span>}
         {field.tip && (
             <span className="group relative ml-1 cursor-help hidden md:inline-block">
               <Info className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-500 transition-colors" />
@@ -203,11 +206,11 @@ export function FormFieldComponent({
             value={displayValue}
             onChange={(e) => onChange(e.target.value)}
             placeholder={field.placeholder}
+            readOnly={disabled}
             maxLength={(field.name.includes("nik") || field.name === "no_kk") ? 19 : (field.name === "hp" || field.name === "telepon") ? 15 : field.maxLength}
             className={`w-full px-[16px] py-[14px] rounded-[12px] border-2 bg-slate-50 text-[14px] md:text-[15px] transition-all duration-300 outline-none
-              ${hasError ? "border-red-400 bg-red-50" : isValid ? "border-emerald-400" : "border-slate-200"}
-              hover:bg-white hover:border-slate-300 hover:shadow-sm hover:-translate-y-px
-              focus:border-emerald-500 focus:bg-white focus:shadow-[0_0_0_4px_rgba(16,185,129,0.15)] focus:-translate-y-0.5`}
+              ${disabled ? "border-slate-200 bg-slate-100 text-slate-500 cursor-not-allowed opacity-70" : hasError ? "border-red-400 bg-red-50" : isValid ? "border-emerald-400" : "border-slate-200"}
+              ${!disabled && "hover:bg-white hover:border-slate-300 hover:shadow-sm hover:-translate-y-px focus:border-emerald-500 focus:bg-white focus:shadow-[0_0_0_4px_rgba(16,185,129,0.15)] focus:-translate-y-0.5"}`}
           />
       )}
 

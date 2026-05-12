@@ -564,6 +564,7 @@ export function RegistrationForm({ editData, onEditDone }: RegistrationFormProps
                       value={formData[field.name] || ""}
                       error={errors[field.name]}
                       onChange={(val) => handleChange(field.name, val)}
+                      disabled={isEditMode && (field.name === "nama" || field.name === "nik")}
                     />
                     {field.name === "nik" && (
                       <a 
