@@ -8,12 +8,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Search, CheckCircle2, Clock, XCircle, Loader2, Trophy, FileText, Smartphone, Undo, Home } from "lucide-react";
+import { SuccessScreen } from "./registration-form/SuccessScreen";
 
 export function StatusChecker({ onSearchActive }: { onSearchActive?: (active: boolean) => void }) {
   const [query, setQuery] = useState("");
   const [result, setResult] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [isReprinting, setIsReprinting] = useState(false);
 
   const handleCheck = async () => {
     if (!query.trim()) return;
@@ -43,6 +45,7 @@ export function StatusChecker({ onSearchActive }: { onSearchActive?: (active: bo
     setQuery("");
     setResult(null);
     setSearched(false);
+    setIsReprinting(false);
     if (onSearchActive) onSearchActive(false);
   };
 
@@ -101,7 +104,11 @@ export function StatusChecker({ onSearchActive }: { onSearchActive?: (active: bo
               className="mt-6"
             >
               {result ? (
-                <ResultCard result={result} onReset={handleReset} />
+                isReprinting ? (
+                  <SuccessScreen formData={{ database_id: result.id.toString(), nama: result.nama, nik: result.nik || "-" }} />
+                ) : (
+                  <ResultCard result={result} onReset={handleReset} onReprint={() => setIsReprinting(true)} />
+                )
               ) : (
                 <div className="text-center p-6 bg-white rounded-[20px] border-2 border-dashed border-red-300 shadow-sm">
                   <XCircle className="w-12 h-12 text-red-400 mx-auto mb-3" />
@@ -125,7 +132,7 @@ export function StatusChecker({ onSearchActive }: { onSearchActive?: (active: bo
   );
 }
 
-function ResultCard({ result, onReset }: { result: any; onReset: () => void }) {
+function ResultCard({ result, onReset, onReprint }: { result: any; onReset: () => void; onReprint: () => void }) {
   const status = result.status_pendaftaran?.toLowerCase() || "";
 
   // Tahap 1 Defaults
@@ -307,12 +314,15 @@ function ResultCard({ result, onReset }: { result: any; onReset: () => void }) {
       </div>
 
       {/* Action Footer */}
-      <div className="bg-slate-50 border-t border-dashed border-slate-200 p-4 flex gap-3">
+      <div className="bg-slate-50 border-t border-dashed border-slate-200 p-4 flex gap-2 flex-col md:flex-row">
         <button onClick={onReset} className="flex flex-1 justify-center items-center gap-2 py-3 bg-white border border-slate-300 hover:bg-slate-100 text-slate-500 rounded-xl font-bold text-[13px] transition-colors shadow-sm cursor-pointer">
           <Undo className="w-4 h-4" /> Batal
         </button>
+        <button onClick={onReprint} className="flex flex-[1.5] justify-center items-center gap-2 py-3 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold text-[13px] transition-colors shadow-sm cursor-pointer">
+          <FileText className="w-4 h-4" /> Cetak Bukti
+        </button>
         <button onClick={() => window.location.reload()} className="flex flex-[2] justify-center items-center gap-2 py-3 text-white rounded-xl font-bold text-[13px] transition-colors shadow-sm cursor-pointer" style={{ backgroundColor: warna }}>
-          <Home className="w-4 h-4" /> Ke Beranda Pendaftaran
+          <Home className="w-4 h-4" /> Ke Beranda
         </button>
       </div>
     </div>
