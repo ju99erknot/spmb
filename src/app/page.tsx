@@ -22,6 +22,7 @@ export default function HomePage() {
   const { stats } = useRealtimeStats();
   const [nowMillis, setNowMillis] = useState(Date.now());
   const [isSearchActive, setIsSearchActive] = useState(false);
+  const [editData, setEditData] = useState<any>(null);
 
   useEffect(() => {
     const timer = setInterval(() => setNowMillis(Date.now()), 1000);
@@ -96,11 +97,13 @@ export default function HomePage() {
             </div>
 
             {/* Status Checker */}
-            <StatusChecker onSearchActive={setIsSearchActive} />
+            <StatusChecker onSearchActive={setIsSearchActive} onEditData={(data) => { setEditData(data); setIsSearchActive(false); }} />
 
             {/* Registration Form */}
             <div className={isSearchActive ? "hidden" : "block"}>
-              {stats.sisa > 0 ? (
+              {editData ? (
+                <RegistrationForm editData={editData} onEditDone={() => setEditData(null)} />
+              ) : stats.sisa > 0 ? (
                 <RegistrationForm />
               ) : (
                 <div className="border-t-[5px] border-t-rose-500 shadow-2xl rounded-2xl p-8 md:p-12 text-center bg-white/80 backdrop-blur-xl border border-white/60 mt-8 relative overflow-hidden">

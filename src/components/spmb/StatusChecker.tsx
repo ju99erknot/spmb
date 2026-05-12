@@ -10,12 +10,15 @@ import { Badge } from "@/components/ui/badge";
 import { Search, CheckCircle2, Clock, XCircle, Loader2, Trophy, FileText, Smartphone, Undo, Home } from "lucide-react";
 import { SuccessScreen } from "./registration-form/SuccessScreen";
 
-export function StatusChecker({ onSearchActive }: { onSearchActive?: (active: boolean) => void }) {
+export function StatusChecker({ onSearchActive, onEditData }: { onSearchActive?: (active: boolean) => void, onEditData?: (data: any) => void }) {
   const [query, setQuery] = useState("");
   const [result, setResult] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [isReprinting, setIsReprinting] = useState(false);
+  const [isVerifyingEdit, setIsVerifyingEdit] = useState(false);
+  const [verifyHp, setVerifyHp] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const handleCheck = async () => {
     if (!query.trim()) return;
@@ -41,11 +44,39 @@ export function StatusChecker({ onSearchActive }: { onSearchActive?: (active: bo
     }
   };
 
+  const handleEditVerify = async () => {
+    if (!verifyHp.trim() || !onEditData) return;
+    setIsVerifying(true);
+    try {
+      const { data, error } = await supabase
+        .from("pendaftar_dapodik")
+        .select("*")
+        .eq("nik", result.nik)
+        .eq("hp", verifyHp.replace(/\D/g, ""))
+        .limit(1);
+
+      if (error) throw error;
+      if (data && data.length > 0) {
+        // Success
+        onEditData(data[0]);
+      } else {
+        alert("Nomor WhatsApp tidak sesuai dengan data pendaftaran.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Gagal memverifikasi data.");
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
   const handleReset = () => {
     setQuery("");
     setResult(null);
     setSearched(false);
     setIsReprinting(false);
+    setIsVerifyingEdit(false);
+    setVerifyHp("");
     if (onSearchActive) onSearchActive(false);
   };
 
@@ -106,8 +137,31 @@ export function StatusChecker({ onSearchActive }: { onSearchActive?: (active: bo
               {result ? (
                 isReprinting ? (
                   <SuccessScreen formData={{ database_id: result.id.toString(), nama: result.nama, nik: result.nik || "-" }} />
+                ) : isVerifyingEdit ? (
+                  <div className="text-center p-6 bg-white rounded-[20px] border border-slate-200 shadow-sm">
+                    <Smartphone className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+                    <h3 className="m-0 font-extrabold text-lg text-slate-800">Verifikasi Keamanan</h3>
+                    <p className="text-xs text-slate-500 mt-2 mb-4 max-w-[250px] mx-auto">
+                      Masukkan Nomor WhatsApp yang Anda gunakan saat mendaftar untuk membuktikan kepemilikan data.
+                    </p>
+                    <input
+                      type="tel"
+                      value={verifyHp}
+                      onChange={(e) => setVerifyHp(e.target.value)}
+                      placeholder="Contoh: 08123456789"
+                      className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 mb-4 outline-none focus:border-amber-500"
+                    />
+                    <div className="flex gap-2">
+                      <button onClick={() => setIsVerifyingEdit(false)} className="flex-1 py-3 bg-white border border-slate-300 hover:bg-slate-50 text-slate-600 rounded-xl font-bold transition-colors cursor-pointer">
+                        Batal
+                      </button>
+                      <button onClick={handleEditVerify} disabled={isVerifying} className="flex-[2] py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold transition-colors shadow-sm cursor-pointer disabled:opacity-50 flex justify-center items-center">
+                        {isVerifying ? <Loader2 className="w-4 h-4 animate-spin" /> : "Verifikasi & Edit"}
+                      </button>
+                    </div>
+                  </div>
                 ) : (
-                  <ResultCard result={result} onReset={handleReset} onReprint={() => setIsReprinting(true)} />
+                  <ResultCard result={result} onReset={handleReset} onReprint={() => setIsReprinting(true)} onEdit={() => setIsVerifyingEdit(true)} />
                 )
               ) : (
                 <div className="text-center p-6 bg-white rounded-[20px] border-2 border-dashed border-red-300 shadow-sm">
@@ -132,7 +186,7 @@ export function StatusChecker({ onSearchActive }: { onSearchActive?: (active: bo
   );
 }
 
-function ResultCard({ result, onReset, onReprint }: { result: any; onReset: () => void; onReprint: () => void }) {
+function ResultCard({ result, onReset, onReprint, onEdit }: { result: any; onReset: () => void; onReprint: () => void; onEdit: () => void }) {
   const status = result.status_pendaftaran?.toLowerCase() || "";
 
   // Tahap 1 Defaults
@@ -318,11 +372,14 @@ function ResultCard({ result, onReset, onReprint }: { result: any; onReset: () =
         <button onClick={onReset} className="flex flex-1 justify-center items-center gap-2 py-3 bg-white border border-slate-300 hover:bg-slate-100 text-slate-500 rounded-xl font-bold text-[13px] transition-colors shadow-sm cursor-pointer">
           <Undo className="w-4 h-4" /> Batal
         </button>
-        <button onClick={onReprint} className="flex flex-[1.5] justify-center items-center gap-2 py-3 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold text-[13px] transition-colors shadow-sm cursor-pointer">
+        <button onClick={onReprint} className="flex flex-1 justify-center items-center gap-2 py-3 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold text-[13px] transition-colors shadow-sm cursor-pointer">
           <FileText className="w-4 h-4" /> Cetak Bukti
         </button>
-        <button onClick={() => window.location.reload()} className="flex flex-[2] justify-center items-center gap-2 py-3 text-white rounded-xl font-bold text-[13px] transition-colors shadow-sm cursor-pointer" style={{ backgroundColor: warna }}>
-          <Home className="w-4 h-4" /> Ke Beranda
+        <button onClick={onEdit} className="flex flex-1 justify-center items-center gap-2 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-[13px] transition-colors shadow-sm cursor-pointer">
+          <FileText className="w-4 h-4" /> Edit Data
+        </button>
+        <button onClick={() => window.location.reload()} className="flex flex-1 justify-center items-center gap-2 py-3 text-white rounded-xl font-bold text-[13px] transition-colors shadow-sm cursor-pointer" style={{ backgroundColor: warna }}>
+          <Home className="w-4 h-4" /> Beranda
         </button>
       </div>
     </div>

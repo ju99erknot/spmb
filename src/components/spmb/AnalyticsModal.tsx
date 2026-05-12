@@ -243,7 +243,7 @@ export function AnalyticsModal({ isOpen, onClose }: AnalyticsModalProps) {
                     <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
                   </span>
                   <span className="text-[9px] text-slate-500 font-bold uppercase">
-                    Live data from Supabase
+                    Live data from Database
                   </span>
                 </div>
               </div>

@@ -59,7 +59,13 @@ import {
   School
 } from "lucide-react";
 
-export function RegistrationForm() {
+interface RegistrationFormProps {
+  editData?: any;
+  onEditDone?: () => void;
+}
+
+export function RegistrationForm({ editData, onEditDone }: RegistrationFormProps = {}) {
+  const isEditMode = !!editData;
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -77,13 +83,26 @@ export function RegistrationForm() {
     },
   });
 
-  useAutoSave(formData);
+  useAutoSave(isEditMode ? {} : formData);
 
-  // Load draft on mount and fetch districts
+  // Load draft on mount (or edit data) and fetch districts
   useEffect(() => {
-    const draft = loadDraft();
-    if (Object.keys(draft).length > 0) {
-      setFormData(draft);
+    if (isEditMode && editData) {
+      // Pre-fill form with existing data from DB
+      const preFilled: Record<string, string> = {};
+      Object.keys(editData).forEach(key => {
+        if (editData[key] !== null && editData[key] !== undefined) {
+          preFilled[key] = String(editData[key]);
+        }
+      });
+      if (editData.id) preFilled.database_id = String(editData.id);
+      setFormData(preFilled);
+      setIsStarted(true); // Skip prep screen in edit mode
+    } else {
+      const draft = loadDraft();
+      if (Object.keys(draft).length > 0) {
+        setFormData(draft);
+      }
     }
     
     // Fetch districts (Sukabumi ID: 3202)
@@ -249,8 +268,8 @@ export function RegistrationForm() {
 
   const handleNext = async () => {
     if (validateStep(wizard.currentStep)) {
-        // Additional Check for Step 1: Duplicate NIK in Database
-        if (wizard.currentStep === 1) {
+        // Additional Check for Step 1: Duplicate NIK in Database (skip in edit mode)
+        if (wizard.currentStep === 1 && !isEditMode) {
             setIsSubmitting(true);
             try {
                 const cleanNik = formData.nik?.replace(/\D/g, "");
@@ -330,7 +349,7 @@ export function RegistrationForm() {
     setIsSubmitting(true);
     try {
         // Pre-process data types
-        const payload = {
+        const payload: any = {
             ...formData,
             nik: formData.nik ? formData.nik.replace(/\D/g, "") : null,
             nik_ayah: formData.nik_ayah ? formData.nik_ayah.replace(/\D/g, "") : null,
@@ -345,18 +364,34 @@ export function RegistrationForm() {
             tinggi_badan: formData.tinggi_badan ? parseInt(formData.tinggi_badan) : null,
             lingkar_kepala: formData.lingkar_kepala ? parseInt(formData.lingkar_kepala) : null,
             jml_saudara: formData.jml_saudara ? parseInt(formData.jml_saudara) : null,
-            status_pendaftaran: 'Tahap 1'
         };
 
-      const { data, error } = await supabase.from("pendaftar_dapodik").insert([payload]).select("id").single();
-      if (error) throw error;
-      
-      clearDraft();
-      
-      // Store the returned ID into formData for the success screen
-      setFormData(prev => ({...prev, database_id: data.id.toString()}));
-      setSubmitted(true);
-      toast.success("Pendaftaran berhasil dikirim! 🎉");
+        // Remove internal keys that shouldn't be sent to Supabase
+        delete payload.database_id;
+
+        if (isEditMode && editData?.id) {
+          // UPDATE existing record
+          const { error } = await supabase
+            .from("pendaftar_dapodik")
+            .update(payload)
+            .eq("id", editData.id);
+          if (error) throw error;
+
+          clearDraft();
+          setFormData(prev => ({...prev, database_id: editData.id.toString()}));
+          setSubmitted(true);
+          toast.success("Data berhasil diperbarui! ✅");
+        } else {
+          // INSERT new record
+          payload.status_pendaftaran = 'Tahap 1';
+          const { data, error } = await supabase.from("pendaftar_dapodik").insert([payload]).select("id").single();
+          if (error) throw error;
+
+          clearDraft();
+          setFormData(prev => ({...prev, database_id: data.id.toString()}));
+          setSubmitted(true);
+          toast.success("Pendaftaran berhasil dikirim! 🎉");
+        }
     } catch (err: any) {
       toast.error(err?.message || "Gagal mengirim data. Coba lagi.");
     } finally {
@@ -368,7 +403,7 @@ export function RegistrationForm() {
     return <SuccessScreen formData={formData} />;
   }
 
-  if (!isStarted) {
+  if (!isStarted && !isEditMode) {
     return (
       <Card className="border-t-[5px] border-t-emerald-500 shadow-2xl rounded-2xl overflow-hidden mb-8 bg-white/60 backdrop-blur-xl border border-white/60">
         <CardContent className="p-6 md:p-10">
@@ -453,8 +488,25 @@ export function RegistrationForm() {
   ];
 
   return (
-    <Card className="border-t-[5px] border-t-emerald-500 shadow-2xl rounded-2xl overflow-hidden mb-8 bg-white/60 backdrop-blur-xl border border-white/60">
+    <Card className={`border-t-[5px] ${isEditMode ? 'border-t-amber-500' : 'border-t-emerald-500'} shadow-2xl rounded-2xl overflow-hidden mb-8 bg-white/60 backdrop-blur-xl border border-white/60`}>
       <CardContent className="p-4 md:p-8">
+        {/* Edit Mode Banner */}
+        {isEditMode && (
+          <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-4 mb-6 flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <div>
+              <h4 className="text-amber-800 font-extrabold text-sm m-0 mb-1">MODE EDIT DATA</h4>
+              <p className="text-amber-700 text-xs m-0 leading-relaxed">
+                Anda sedang mengedit data pendaftaran <b>{editData?.nama || ''}</b>. Perbaiki data yang salah, lalu klik simpan di langkah terakhir.
+              </p>
+            </div>
+            {onEditDone && (
+              <button onClick={onEditDone} className="ml-auto text-amber-600 hover:text-amber-800 text-xs font-bold shrink-0 cursor-pointer bg-transparent border-none">
+                ✕ Batal
+              </button>
+            )}
+          </div>
+        )}
         <StepProgress
           currentStep={wizard.currentStep}
           totalSteps={wizard.totalSteps}
@@ -702,7 +754,7 @@ export function RegistrationForm() {
                         type="button"
                         onClick={handleSubmit}
                         disabled={!agreed || isSubmitting}
-                        className="group relative overflow-hidden flex-[2] py-[14px] md:py-[18px] rounded-[12px] font-extrabold text-[15px] md:text-[16px] uppercase tracking-wider bg-emerald-500 hover:bg-emerald-600 text-white shadow-[0_8px_25px_rgba(16,185,129,0.25)] hover:-translate-y-1 transition-all disabled:opacity-50 disabled:shadow-none disabled:translate-y-0 cursor-pointer outline-none flex items-center justify-center border-none"
+                        className={`group relative overflow-hidden flex-[2] py-[14px] md:py-[18px] rounded-[12px] font-extrabold text-[15px] md:text-[16px] uppercase tracking-wider ${isEditMode ? 'bg-amber-500 hover:bg-amber-600 shadow-[0_8px_25px_rgba(245,158,11,0.25)]' : 'bg-emerald-500 hover:bg-emerald-600 shadow-[0_8px_25px_rgba(16,185,129,0.25)]'} text-white hover:-translate-y-1 transition-all disabled:opacity-50 disabled:shadow-none disabled:translate-y-0 cursor-pointer outline-none flex items-center justify-center border-none`}
                       >
                         {/* Shimmer Effect */}
                         {!isSubmitting && agreed && <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[20deg] animate-[shimmer_3s_infinite] group-hover:animate-[shimmer_1.5s_infinite]" />}
@@ -715,7 +767,7 @@ export function RegistrationForm() {
                           ) : (
                             <>
                               <Send className="w-4 h-4 mr-2" />
-                              Kirim Pendaftaran
+                              {isEditMode ? 'Simpan Perubahan' : 'Kirim Pendaftaran'}
                             </>
                           )}
                         </div>
