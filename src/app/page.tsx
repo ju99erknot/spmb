@@ -11,6 +11,7 @@ import { LoadingScreen } from "@/components/shared/LoadingScreen";
 import { AnimatedBackground } from "@/components/spmb/AnimatedBackground";
 
 import { usePortalSettings } from "@/hooks/usePortalSettings";
+import { useRealtimeStats } from "@/hooks/useRealtimeStats";
 import { StatusCurtain } from "@/components/spmb/StatusCurtain";
 
 export default function HomePage() {
@@ -18,6 +19,7 @@ export default function HomePage() {
   const [showContent, setShowContent] = useState(false);
   const [curtainDismissed, setCurtainDismissed] = useState(false);
   const { settings, isLoading: isSettingsLoading } = usePortalSettings();
+  const { stats } = useRealtimeStats();
   const [nowMillis, setNowMillis] = useState(Date.now());
   const [isSearchActive, setIsSearchActive] = useState(false);
 
@@ -98,7 +100,24 @@ export default function HomePage() {
 
             {/* Registration Form */}
             <div className={isSearchActive ? "hidden" : "block"}>
-              <RegistrationForm />
+              {stats.sisa > 0 ? (
+                <RegistrationForm />
+              ) : (
+                <div className="border-t-[5px] border-t-rose-500 shadow-2xl rounded-2xl p-8 md:p-12 text-center bg-white/80 backdrop-blur-xl border border-white/60 mt-8 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-transparent pointer-events-none" />
+                  <div className="w-[80px] h-[80px] bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-rose-100">
+                    <svg className="w-10 h-10 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl md:text-[1.75rem] font-black text-slate-900 mb-3 tracking-[0.5px]">
+                    PENDAFTARAN DITUTUP
+                  </h3>
+                  <p className="text-slate-500 text-[15px] max-w-md mx-auto leading-relaxed">
+                    Mohon maaf, form pendaftaran telah ditutup otomatis karena <b>kuota penerimaan telah terisi penuh</b>. Terima kasih atas antusiasme Anda.
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Footer */}
