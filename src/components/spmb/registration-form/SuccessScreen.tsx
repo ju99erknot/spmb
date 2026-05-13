@@ -82,7 +82,9 @@ export function SuccessScreen({ formData }: { formData: Record<string, string> }
               <div className="flex justify-between items-center border-b border-slate-100 pb-2">
                 <span className="text-slate-500 text-xs">Tanggal Daftar</span>
                 <strong className="text-slate-800 text-xs">
-                  {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  {formData.created_at 
+                    ? new Date(formData.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+                    : new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </strong>
               </div>
             </div>

@@ -161,7 +161,7 @@ export function StatusChecker({ onSearchActive, onEditData, editEnabled }: { onS
             >
               {result ? (
                 isReprinting ? (
-                  <SuccessScreen formData={{ database_id: result.id.toString(), nama: result.nama, nik: result.nik || "-" }} />
+                  <SuccessScreen formData={{ database_id: result.id.toString(), nama: result.nama, nik: result.nik || "-", created_at: result.created_at }} />
                 ) : isVerifyingEdit ? (
                   <div className="text-center p-6 bg-white rounded-[20px] border border-slate-200 shadow-sm">
                     <Smartphone className="w-12 h-12 text-slate-400 mx-auto mb-3" />
