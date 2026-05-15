@@ -76,20 +76,20 @@ export function FloatingActions() {
           {isOpen && (
             <>
               <motion.button
-                initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
-                animate={{ opacity: 1, scale: 1, x: -65, y: -12 }}
-                exit={{ opacity: 0, scale: 0, x: 0, y: 0 }}
-                transition={{ duration: 0.4, type: "spring", bounce: 0.4 }}
+                initial={{ opacity: 0, scale: 0, y: 0 }}
+                animate={{ opacity: 1, scale: 1, y: -70 }}
+                exit={{ opacity: 0, scale: 0, y: 0 }}
+                transition={{ duration: 0.35, type: "spring", bounce: 0.4 }}
                 onClick={openWA}
                 className="absolute bottom-1 right-1 w-[46px] h-[46px] rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-[0_8px_20px_rgba(37,211,102,0.3)] hover:scale-110 transition-all cursor-pointer border-2 border-white"
               >
                 <MessageCircle className="w-5 h-5" />
               </motion.button>
               <motion.button
-                initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
-                animate={{ opacity: 1, scale: 1, x: -12, y: -65 }}
-                exit={{ opacity: 0, scale: 0, x: 0, y: 0 }}
-                transition={{ duration: 0.4, type: "spring", bounce: 0.4, delay: 0.05 }}
+                initial={{ opacity: 0, scale: 0, y: 0 }}
+                animate={{ opacity: 1, scale: 1, y: -130 }}
+                exit={{ opacity: 0, scale: 0, y: 0 }}
+                transition={{ duration: 0.35, type: "spring", bounce: 0.4, delay: 0.05 }}
                 onClick={() => { setShowAnalytics(true); setIsOpen(false); }}
                 className="absolute bottom-1 right-1 w-[46px] h-[46px] rounded-full bg-slate-800 text-emerald-400 flex items-center justify-center shadow-[0_8px_20px_rgba(15,23,42,0.3)] hover:scale-110 hover:text-emerald-300 hover:bg-slate-700 transition-all cursor-pointer border-2 border-white"
               >
@@ -97,10 +97,10 @@ export function FloatingActions() {
               </motion.button>
               <Link href="/faq">
                 <motion.div
-                  initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
-                  animate={{ opacity: 1, scale: 1, x: -48, y: -48 }}
-                  exit={{ opacity: 0, scale: 0, x: 0, y: 0 }}
-                  transition={{ duration: 0.4, type: "spring", bounce: 0.4, delay: 0.1 }}
+                  initial={{ opacity: 0, scale: 0, y: 0 }}
+                  animate={{ opacity: 1, scale: 1, y: -190 }}
+                  exit={{ opacity: 0, scale: 0, y: 0 }}
+                  transition={{ duration: 0.35, type: "spring", bounce: 0.4, delay: 0.1 }}
                   className="absolute bottom-1 right-1 w-[46px] h-[46px] rounded-full bg-violet-500 text-white flex items-center justify-center shadow-[0_8px_20px_rgba(139,92,246,0.3)] hover:scale-110 hover:bg-violet-600 transition-all cursor-pointer border-2 border-white"
                 >
                   <HelpCircle className="w-5 h-5" />
