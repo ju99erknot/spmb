@@ -262,7 +262,7 @@ export default function FAQPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-hide"
+          className="flex flex-wrap gap-2 mb-6"
         >
           {faqData.map((cat, i) => (
             <button
