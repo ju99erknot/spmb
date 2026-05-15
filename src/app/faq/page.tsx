@@ -262,7 +262,7 @@ export default function FAQPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="flex flex-wrap gap-2 mb-6"
+          className="flex flex-wrap justify-center gap-2 mb-6"
         >
           {faqData.map((cat, i) => (
             <button
