@@ -35,7 +35,10 @@ function buildFooter(): string {
           <span style="color:white; font-size:11px; font-weight:700; letter-spacing:1px;">SDN 02 CIBADAK</span>
         </div>
         <p style="color:#94a3b8; font-size:11px; margin:0 0 4px;">${SCHOOL_ADDRESS}</p>
-        <p style="color:#cbd5e1; font-size:10px; margin:0;">Email ini dikirim otomatis oleh sistem SPMB. Mohon tidak membalas email ini.</p>
+        <p style="color:#cbd5e1; font-size:10px; margin:0 0 10px;">Email ini dikirim otomatis oleh sistem SPMB. Mohon tidak membalas email ini.</p>
+        <p style="color:#e2e8f0; font-size:10px; margin:0;">
+          Developed by <a href="https://www.ju99erknot.my.id/" target="_blank" style="color:#10b981; text-decoration:none; font-weight:600;">@ju99erknot</a>
+        </p>
       </td>
     </tr>`;
 }
