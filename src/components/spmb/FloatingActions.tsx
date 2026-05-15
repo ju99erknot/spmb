@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, BarChart3, X, Send, Plus } from "lucide-react";
+import { MessageCircle, BarChart3, X, Send, Plus, HelpCircle } from "lucide-react";
+import Link from "next/link";
 import { AnalyticsModal } from "./AnalyticsModal";
 
 export function FloatingActions() {
@@ -94,6 +95,17 @@ export function FloatingActions() {
               >
                 <BarChart3 className="w-5 h-5" />
               </motion.button>
+              <Link href="/faq">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+                  animate={{ opacity: 1, scale: 1, x: -48, y: -48 }}
+                  exit={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+                  transition={{ duration: 0.4, type: "spring", bounce: 0.4, delay: 0.1 }}
+                  className="absolute bottom-1 right-1 w-[46px] h-[46px] rounded-full bg-violet-500 text-white flex items-center justify-center shadow-[0_8px_20px_rgba(139,92,246,0.3)] hover:scale-110 hover:bg-violet-600 transition-all cursor-pointer border-2 border-white"
+                >
+                  <HelpCircle className="w-5 h-5" />
+                </motion.div>
+              </Link>
             </>
           )}
         </AnimatePresence>
