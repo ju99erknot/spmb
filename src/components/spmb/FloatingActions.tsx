@@ -75,33 +75,44 @@ export function FloatingActions() {
         <AnimatePresence>
           {isOpen && (
             <>
+              {/* WhatsApp */}
               <motion.button
                 initial={{ opacity: 0, scale: 0, y: 0 }}
                 animate={{ opacity: 1, scale: 1, y: -70 }}
                 exit={{ opacity: 0, scale: 0, y: 0 }}
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.92 }}
                 transition={{ duration: 0.35, type: "spring", bounce: 0.4 }}
                 onClick={openWA}
-                className="absolute bottom-1 right-1 w-[46px] h-[46px] rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-[0_8px_20px_rgba(37,211,102,0.3)] hover:scale-110 transition-all cursor-pointer border-2 border-white"
+                className="absolute bottom-1 right-1 w-[46px] h-[46px] rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-[0_8px_20px_rgba(37,211,102,0.3)] cursor-pointer border-2 border-white"
               >
                 <MessageCircle className="w-5 h-5" />
               </motion.button>
+
+              {/* Analytics */}
               <motion.button
                 initial={{ opacity: 0, scale: 0, y: 0 }}
                 animate={{ opacity: 1, scale: 1, y: -130 }}
                 exit={{ opacity: 0, scale: 0, y: 0 }}
+                whileHover={{ scale: 1.15, backgroundColor: "#1e293b" }}
+                whileTap={{ scale: 0.92 }}
                 transition={{ duration: 0.35, type: "spring", bounce: 0.4, delay: 0.05 }}
                 onClick={() => { setShowAnalytics(true); setIsOpen(false); }}
-                className="absolute bottom-1 right-1 w-[46px] h-[46px] rounded-full bg-slate-800 text-emerald-400 flex items-center justify-center shadow-[0_8px_20px_rgba(15,23,42,0.3)] hover:scale-110 hover:text-emerald-300 hover:bg-slate-700 transition-all cursor-pointer border-2 border-white"
+                className="absolute bottom-1 right-1 w-[46px] h-[46px] rounded-full bg-slate-800 text-emerald-400 flex items-center justify-center shadow-[0_8px_20px_rgba(15,23,42,0.3)] cursor-pointer border-2 border-white"
               >
                 <BarChart3 className="w-5 h-5" />
               </motion.button>
+
+              {/* FAQ */}
               <Link href="/faq">
                 <motion.div
                   initial={{ opacity: 0, scale: 0, y: 0 }}
                   animate={{ opacity: 1, scale: 1, y: -190 }}
                   exit={{ opacity: 0, scale: 0, y: 0 }}
+                  whileHover={{ scale: 1.15 }}
+                  whileTap={{ scale: 0.92 }}
                   transition={{ duration: 0.35, type: "spring", bounce: 0.4, delay: 0.1 }}
-                  className="absolute bottom-1 right-1 w-[46px] h-[46px] rounded-full bg-violet-500 text-white flex items-center justify-center shadow-[0_8px_20px_rgba(139,92,246,0.3)] hover:scale-110 hover:bg-violet-600 transition-all cursor-pointer border-2 border-white"
+                  className="absolute bottom-1 right-1 w-[46px] h-[46px] rounded-full bg-violet-500 text-white flex items-center justify-center shadow-[0_8px_20px_rgba(139,92,246,0.3)] cursor-pointer border-2 border-white"
                 >
                   <HelpCircle className="w-5 h-5" />
                 </motion.div>
@@ -114,8 +125,10 @@ export function FloatingActions() {
         <motion.button
           onClick={toggleFab}
           animate={{ rotate: isOpen ? 135 : 0 }}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.93 }}
           transition={{ duration: 0.3, type: "spring", bounce: 0.5 }}
-          className="relative w-[54px] h-[54px] md:w-[58px] md:h-[58px] bg-gradient-to-tr from-emerald-600 to-emerald-400 text-white rounded-full flex items-center justify-center text-2xl shadow-[0_10px_25px_rgba(16,185,129,0.4)] hover:shadow-[0_15px_30px_rgba(16,185,129,0.5)] hover:scale-105 transition-all z-10 cursor-pointer border-2 border-white/20"
+          className="relative w-[54px] h-[54px] md:w-[58px] md:h-[58px] bg-gradient-to-tr from-emerald-600 to-emerald-400 text-white rounded-full flex items-center justify-center shadow-[0_10px_25px_rgba(16,185,129,0.4)] z-10 cursor-pointer border-2 border-white/20"
         >
           {/* Pulse ring */}
           <div className="absolute w-full h-full rounded-full bg-emerald-400 opacity-40 animate-ping -z-10" style={{ animationDuration: '3s' }} />
