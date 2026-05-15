@@ -165,9 +165,32 @@ function emailDitolak(nama: string, namaOrtu: string): { subject: string; html: 
       </p>
       ${buildStudentCard(nama, "#f1f5f9", "#64748b", "📋 Belum Dapat Diterima pada Seleksi Ini")}
       <p style="color:#475569; font-size:15px; line-height:1.8; margin:0 0 20px;">
-        <strong style="color:#1e293b;">${nama}</strong> belum dapat kami terima sebagai peserta didik baru di <strong style="color:#1e293b;">${SCHOOL_NAME}</strong> untuk Tahun Ajaran ${SCHOOL_YEAR}. Keputusan ini didasarkan pada kuota dan kriteria seleksi yang berlaku.
+        <strong style="color:#1e293b;">${nama}</strong> belum dapat kami terima sebagai peserta didik baru di <strong style="color:#1e293b;">${SCHOOL_NAME}</strong> untuk Tahun Ajaran ${SCHOOL_YEAR}. Keputusan ini didasarkan pada pertimbangan berikut:
       </p>
-      ${buildInfoBox("💙", "Pesan dari Kami:", "Kami sangat mengapresiasi antusias dan kepercayaan Bapak/Ibu. Semoga putra/putri Bapak/Ibu mendapatkan tempat terbaik di sekolah lain dan sukses selalu.", "#eff6ff", "#3b82f6", "#1e40af")}
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:#fafafa; border:1px solid #e2e8f0; border-radius:12px; margin:0 0 22px;">
+        <tr><td style="padding:18px 20px;">
+          <p style="color:#475569; font-size:13px; margin:0 0 10px; font-weight:700; color:#1e293b;">Kemungkinan penyebab:</p>
+          <table cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="padding:5px 0; color:#64748b; font-size:13px; line-height:1.7;">
+                🏠 <strong>Zonasi</strong> — Jarak tempat tinggal di luar radius prioritas penerimaan
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:5px 0; color:#64748b; font-size:13px; line-height:1.7;">
+                👥 <strong>Kuota penuh</strong> — Jumlah pendaftar melebihi kapasitas yang tersedia
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:5px 0; color:#64748b; font-size:13px; line-height:1.7;">
+                📋 <strong>Prioritas seleksi</strong> — Calon lain memiliki nilai prioritas lebih tinggi
+              </td>
+            </tr>
+          </table>
+        </td></tr>
+      </table>
+      ${buildInfoBox("💙", "Pesan dari Kami:", "Kami sangat mengapresiasi antusias dan kepercayaan Bapak/Ibu dalam mendaftarkan putra/putri di ${SCHOOL_NAME}. Semoga mendapatkan tempat terbaik di sekolah lain dan sukses selalu dalam perjalanan pendidikannya.", "#eff6ff", "#3b82f6", "#1e40af")}
+      ${buildInfoBox("📞", "Informasi Lebih Lanjut:", "Untuk pertanyaan mengenai hasil seleksi, Bapak/Ibu dapat menghubungi pihak sekolah secara langsung atau melalui portal SPMB.", "#f8fafc", "#94a3b8", "#475569")}
       ${buildClosing("Terima kasih atas pengertian dan kepercayaan Bapak/Ibu.<br><br>")}
     </td></tr>
     ${buildFooter()}`;
@@ -177,6 +200,7 @@ function emailDitolak(nama: string, namaOrtu: string): { subject: string; html: 
     html: wrapEmail(body),
   };
 }
+
 
 function getEmailHTML(status: string, nama: string, namaOrtu: string): { subject: string; html: string } {
   if (status === "Tahap 2") return emailTahap2(nama, namaOrtu);
