@@ -145,8 +145,17 @@ const faqData: FAQCategory[] = [
   },
 ];
 
-function FAQAccordionItem({ item, index }: { item: FAQItem; index: number }) {
-  const [isOpen, setIsOpen] = useState(false);
+function FAQAccordionItem({
+  item,
+  index,
+  isOpen,
+  onToggle,
+}: {
+  item: FAQItem;
+  index: number;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
 
   return (
     <motion.div
@@ -155,7 +164,7 @@ function FAQAccordionItem({ item, index }: { item: FAQItem; index: number }) {
       transition={{ delay: index * 0.05, duration: 0.3 }}
     >
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={onToggle}
         className="w-full text-left group"
         aria-expanded={isOpen}
       >
@@ -218,6 +227,12 @@ function FAQAccordionItem({ item, index }: { item: FAQItem; index: number }) {
 
 export default function FAQPage() {
   const [activeCategory, setActiveCategory] = useState(0);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const handleCategoryChange = (i: number) => {
+    setActiveCategory(i);
+    setOpenIndex(null);
+  };
 
   return (
     <>
@@ -267,7 +282,7 @@ export default function FAQPage() {
           {faqData.map((cat, i) => (
             <button
               key={cat.title}
-              onClick={() => setActiveCategory(i)}
+              onClick={() => handleCategoryChange(i)}
               title={cat.title}
               className={`flex items-center justify-center gap-2 px-3 py-2.5 md:px-4 rounded-xl text-[13px] font-bold whitespace-nowrap transition-all duration-300 border ${
                 activeCategory === i
@@ -313,7 +328,13 @@ export default function FAQPage() {
           {/* Questions */}
           <div className="space-y-3">
             {faqData[activeCategory].items.map((item, i) => (
-              <FAQAccordionItem key={item.q} item={item} index={i} />
+              <FAQAccordionItem
+                key={item.q}
+                item={item}
+                index={i}
+                isOpen={openIndex === i}
+                onToggle={() => setOpenIndex(openIndex === i ? null : i)}
+              />
             ))}
           </div>
         </motion.div>
