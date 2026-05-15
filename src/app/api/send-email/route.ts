@@ -4,7 +4,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 const SCHOOL_NAME = "SDN 02 Cibadak";
 const SCHOOL_YEAR = "2026/2027";
-const SCHOOL_ADDRESS = "Jl. Raya Cibadak, Kabupaten Sukabumi, Jawa Barat";
+const SCHOOL_ADDRESS = "Jl. Kebon Pala 2 Cibadak, Kabupaten Sukabumi, Jawa Barat";
 const PORTAL_URL = "spmb.sdn02cibadak.sch.id";
 
 const BASE_STYLES = `
