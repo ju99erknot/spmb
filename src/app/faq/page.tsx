@@ -268,14 +268,15 @@ export default function FAQPage() {
             <button
               key={cat.title}
               onClick={() => setActiveCategory(i)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-bold whitespace-nowrap transition-all duration-300 border ${
+              title={cat.title}
+              className={`flex items-center justify-center gap-2 px-3 py-2.5 md:px-4 rounded-xl text-[13px] font-bold whitespace-nowrap transition-all duration-300 border ${
                 activeCategory === i
                   ? "bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-500/25"
                   : "bg-white/80 text-slate-500 border-slate-200/60 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200"
               }`}
             >
               {cat.icon}
-              {cat.title}
+              <span className="hidden md:inline">{cat.title}</span>
             </button>
           ))}
         </motion.div>
