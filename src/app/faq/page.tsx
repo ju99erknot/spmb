@@ -61,7 +61,7 @@ const faqData: FAQCategory[] = [
     ],
   },
   {
-    title: "Berkas & Dokumen",
+    title: "Berkas",
     icon: <ClipboardCheck className="w-5 h-5" />,
     color: "#3b82f6",
     items: [
@@ -127,7 +127,7 @@ const faqData: FAQCategory[] = [
     ],
   },
   {
-    title: "Kontak & Bantuan",
+    title: "Kontak",
     icon: <Phone className="w-5 h-5" />,
     color: "#f43f5e",
     items: [
@@ -169,26 +169,23 @@ function FAQAccordionItem({
         aria-expanded={isOpen}
       >
         <div
-          className={`flex items-start gap-3 p-4 rounded-xl transition-all duration-300 ${
-            isOpen
-              ? "bg-emerald-50/80 border border-emerald-200/60"
-              : "bg-white/60 border border-slate-100 hover:bg-emerald-50/40 hover:border-emerald-200/40"
-          }`}
+          className={`flex items-start gap-3 p-4 rounded-xl transition-all duration-300 ${isOpen
+            ? "bg-emerald-50/80 border border-emerald-200/60"
+            : "bg-white/60 border border-slate-100 hover:bg-emerald-50/40 hover:border-emerald-200/40"
+            }`}
         >
           <div
-            className={`mt-0.5 p-1.5 rounded-lg transition-colors duration-300 ${
-              isOpen
-                ? "bg-emerald-500 text-white"
-                : "bg-slate-100 text-slate-400 group-hover:bg-emerald-100 group-hover:text-emerald-600"
-            }`}
+            className={`mt-0.5 p-1.5 rounded-lg transition-colors duration-300 ${isOpen
+              ? "bg-emerald-500 text-white"
+              : "bg-slate-100 text-slate-400 group-hover:bg-emerald-100 group-hover:text-emerald-600"
+              }`}
           >
             {item.icon}
           </div>
           <div className="flex-1 min-w-0">
             <p
-              className={`font-semibold text-[14px] leading-snug transition-colors duration-300 ${
-                isOpen ? "text-emerald-800" : "text-slate-700"
-              }`}
+              className={`font-semibold text-[14px] leading-snug transition-colors duration-300 ${isOpen ? "text-emerald-800" : "text-slate-700"
+                }`}
             >
               {item.q}
             </p>
@@ -214,9 +211,8 @@ function FAQAccordionItem({
             className="mt-1 flex-shrink-0"
           >
             <ChevronDown
-              className={`w-4 h-4 transition-colors duration-300 ${
-                isOpen ? "text-emerald-500" : "text-slate-300"
-              }`}
+              className={`w-4 h-4 transition-colors duration-300 ${isOpen ? "text-emerald-500" : "text-slate-300"
+                }`}
             />
           </motion.div>
         </div>
@@ -284,11 +280,10 @@ export default function FAQPage() {
               key={cat.title}
               onClick={() => handleCategoryChange(i)}
               title={cat.title}
-              className={`flex items-center justify-center gap-2 px-3 py-2.5 md:px-4 rounded-xl text-[13px] font-bold whitespace-nowrap transition-all duration-300 border ${
-                activeCategory === i
-                  ? "bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-500/25"
-                  : "bg-white/80 text-slate-500 border-slate-200/60 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200"
-              }`}
+              className={`flex items-center justify-center gap-2 px-3 py-2.5 md:px-4 rounded-xl text-[13px] font-bold whitespace-nowrap transition-all duration-300 border ${activeCategory === i
+                ? "bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-500/25"
+                : "bg-white/80 text-slate-500 border-slate-200/60 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200"
+                }`}
             >
               {cat.icon}
               <span className="hidden md:inline">{cat.title}</span>
