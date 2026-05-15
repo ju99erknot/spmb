@@ -2,261 +2,192 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Email templates for each status
-function getEmailHTML(
-  status: string,
-  nama: string,
-  namaOrtu: string
-): { subject: string; html: string } {
-  const schoolName = "SDN 02 Cibadak";
-  const year = "2026/2027";
+const SCHOOL_NAME = "SDN 02 Cibadak";
+const SCHOOL_YEAR = "2026/2027";
+const SCHOOL_ADDRESS = "Jl. Raya Cibadak, Kabupaten Sukabumi, Jawa Barat";
+const PORTAL_URL = "spmb.sdn02cibadak.sch.id";
 
-  if (status === "Tahap 2") {
-    return {
-      subject: `✅ Berkas Terverifikasi — ${nama} | SPMB ${schoolName}`,
-      html: `
-<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#f0fdf4;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
-  <!-- Header -->
-  <tr>
-    <td style="background:linear-gradient(135deg,#059669,#10b981,#34d399);padding:40px 30px;text-align:center;">
-      <div style="font-size:48px;margin-bottom:12px;">📋</div>
-      <h1 style="color:#ffffff;font-size:22px;margin:0 0 8px;font-weight:800;letter-spacing:0.5px;">BERKAS TERVERIFIKASI</h1>
-      <p style="color:rgba(255,255,255,0.9);font-size:13px;margin:0;letter-spacing:1px;">SPMB ${schoolName} — T.A. ${year}</p>
-    </td>
-  </tr>
-  <!-- Body -->
-  <tr>
-    <td style="padding:35px 30px;">
-      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 20px;">
-        Assalamu'alaikum Wr. Wb.<br><br>
-        Yth. Bapak/Ibu <b>${namaOrtu}</b>,
-      </p>
-      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 25px;">
-        Dengan ini kami informasikan bahwa berkas pendaftaran atas nama:
-      </p>
-      <!-- Info Card -->
-      <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0fdf4;border:2px solid #bbf7d0;border-radius:12px;margin:0 0 25px;">
-        <tr>
-          <td style="padding:20px 24px;">
-            <table width="100%" cellpadding="0" cellspacing="0">
-              <tr>
-                <td style="color:#6b7280;font-size:12px;padding:6px 0;text-transform:uppercase;letter-spacing:1px;">Nama Calon Peserta Didik</td>
-              </tr>
-              <tr>
-                <td style="color:#059669;font-size:20px;font-weight:800;padding:0 0 12px;letter-spacing:0.5px;">${nama}</td>
-              </tr>
-              <tr>
-                <td style="padding:12px 0 0;border-top:1px dashed #bbf7d0;">
-                  <span style="background:#dcfce7;color:#059669;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;">📌 Status: TAHAP 2 — VERIFIKASI BERKAS</span>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
-      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 20px;">
-        telah <b style="color:#059669;">berhasil diverifikasi</b> oleh panitia SPMB dan masuk ke <b>Tahap 2</b>. Silakan menunggu pengumuman selanjutnya mengenai hasil seleksi akhir.
-      </p>
-      <!-- Info Box -->
-      <table width="100%" cellpadding="0" cellspacing="0" style="background:#eff6ff;border-left:4px solid #3b82f6;border-radius:0 8px 8px 0;margin:0 0 25px;">
-        <tr>
-          <td style="padding:16px 20px;">
-            <p style="color:#1e40af;font-size:13px;margin:0;line-height:1.6;">
-              <b>ℹ️ Informasi:</b><br>
-              Anda dapat mengecek status pendaftaran kapan saja melalui portal SPMB online kami.
-            </p>
-          </td>
-        </tr>
-      </table>
-      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0;">
-        Terima kasih atas kepercayaan Bapak/Ibu.<br><br>
-        Wassalamu'alaikum Wr. Wb.
-      </p>
-    </td>
-  </tr>
-  <!-- Footer -->
-  <tr>
-    <td style="background:#f9fafb;padding:24px 30px;border-top:1px solid #e5e7eb;text-align:center;">
-      <p style="color:#9ca3af;font-size:11px;margin:0 0 4px;">Panitia SPMB ${schoolName}</p>
-      <p style="color:#d1d5db;font-size:10px;margin:0;">Email ini dikirim otomatis oleh sistem. Mohon tidak membalas email ini.</p>
-    </td>
-  </tr>
+const BASE_STYLES = `
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: #f1f5f9; font-family: 'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif; }
+  </style>
+`;
+
+function buildHeader(emoji: string, title: string): string {
+  return `
+    <tr>
+      <td style="background: linear-gradient(135deg, #059669 0%, #10b981 60%, #34d399 100%); text-align: center; padding: 40px 30px 35px;">
+        <div style="display:inline-block; background:rgba(255,255,255,0.18); border:2px solid rgba(255,255,255,0.35); border-radius:50%; width:76px; height:76px; line-height:76px; font-size:38px; margin-bottom:14px;">${emoji}</div>
+        <h1 style="color:#ffffff; font-size:21px; font-weight:800; letter-spacing:0.5px; margin:0 0 5px;">${title}</h1>
+        <p style="color:#eab308; font-size:12px; font-weight:700; letter-spacing:2px; margin:0 0 3px; text-transform:uppercase;">${SCHOOL_NAME}</p>
+        <p style="color:rgba(255,255,255,0.75); font-size:11px; margin:0;">Tahun Ajaran ${SCHOOL_YEAR}</p>
+      </td>
+    </tr>`;
+}
+
+function buildFooter(): string {
+  return `
+    <tr>
+      <td style="background:#f8fafc; padding:22px 30px; border-top:1px solid #e2e8f0; text-align:center;">
+        <div style="display:inline-block; background:linear-gradient(135deg,#059669,#10b981); border-radius:8px; padding:7px 18px; margin-bottom:12px;">
+          <span style="color:white; font-size:11px; font-weight:700; letter-spacing:1px;">SDN 02 CIBADAK</span>
+        </div>
+        <p style="color:#94a3b8; font-size:11px; margin:0 0 4px;">${SCHOOL_ADDRESS}</p>
+        <p style="color:#cbd5e1; font-size:10px; margin:0;">Email ini dikirim otomatis oleh sistem SPMB. Mohon tidak membalas email ini.</p>
+      </td>
+    </tr>`;
+}
+
+function buildStudentCard(nama: string, badgeBg: string, badgeColor: string, badgeText: string): string {
+  return `
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff; border:2px solid #e2e8f0; border-radius:16px; margin:0 0 22px; box-shadow:0 2px 12px rgba(0,0,0,0.06); overflow:hidden;">
+      <tr><td style="background:linear-gradient(90deg,#f0fdf4,#dcfce7); height:4px; padding:0;"></td></tr>
+      <tr><td style="padding:20px 24px;">
+        <p style="color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:1.5px; margin:0 0 5px; font-weight:600;">Nama Calon Peserta Didik</p>
+        <p style="color:#1e293b; font-size:20px; font-weight:800; margin:0 0 14px; letter-spacing:0.3px;">${nama}</p>
+        <div style="border-top:1px dashed #e2e8f0; padding-top:12px;">
+          <span style="background:${badgeBg}; color:${badgeColor}; padding:7px 16px; border-radius:24px; font-size:12px; font-weight:700; letter-spacing:0.3px; display:inline-block;">${badgeText}</span>
+        </div>
+      </td></tr>
+    </table>`;
+}
+
+function buildInfoBox(icon: string, title: string, content: string, bg: string, borderColor: string, textColor: string): string {
+  return `
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:${bg}; border-left:4px solid ${borderColor}; border-radius:0 10px 10px 0; margin:0 0 22px;">
+      <tr><td style="padding:14px 18px;">
+        <p style="color:${textColor}; font-size:13px; margin:0; line-height:1.7;">
+          <strong>${icon} ${title}</strong><br>${content}
+        </p>
+      </td></tr>
+    </table>`;
+}
+
+function buildGreeting(namaOrtu: string): string {
+  return `
+    <p style="color:#475569; font-size:15px; line-height:1.8; margin:0 0 18px;">
+      Assalamu'alaikum Wr. Wb.<br><br>
+      Yth. Bapak/Ibu <strong style="color:#1e293b;">${namaOrtu}</strong>,
+    </p>`;
+}
+
+function buildClosing(extra: string = ""): string {
+  return `
+    <p style="color:#475569; font-size:15px; line-height:1.8; margin:0;">
+      ${extra}Wassalamu'alaikum Wr. Wb.<br><br>
+      <strong style="color:#1e293b;">Panitia SPMB ${SCHOOL_NAME}</strong>
+    </p>`;
+}
+
+function wrapEmail(content: string): string {
+  return `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  ${BASE_STYLES}
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9; padding:28px 14px;">
+  <tr><td>
+    <table width="100%" cellpadding="0" cellspacing="0" style="max-width:580px; margin:0 auto; background:#ffffff; border-radius:20px; overflow:hidden; box-shadow:0 8px 40px rgba(0,0,0,0.09);">
+      ${content}
+    </table>
+  </td></tr>
 </table>
 </body>
-</html>`,
-    };
-  }
+</html>`;
+}
 
-  if (status === "Diterima") {
-    return {
-      subject: `🎉 SELAMAT! ${nama} DITERIMA — SPMB ${schoolName}`,
-      html: `
-<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#f0fdf4;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
-  <!-- Header -->
-  <tr>
-    <td style="background:linear-gradient(135deg,#059669,#10b981,#34d399);padding:40px 30px;text-align:center;">
-      <div style="font-size:56px;margin-bottom:12px;">🎉</div>
-      <h1 style="color:#ffffff;font-size:24px;margin:0 0 8px;font-weight:900;letter-spacing:1px;">SELAMAT! DITERIMA</h1>
-      <p style="color:rgba(255,255,255,0.9);font-size:13px;margin:0;letter-spacing:1px;">SPMB ${schoolName} — T.A. ${year}</p>
-    </td>
-  </tr>
-  <!-- Body -->
-  <tr>
-    <td style="padding:35px 30px;">
-      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 20px;">
-        Assalamu'alaikum Wr. Wb.<br><br>
-        Yth. Bapak/Ibu <b>${namaOrtu}</b>,
-      </p>
-      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 25px;">
-        Dengan penuh rasa syukur, kami sampaikan bahwa putra/putri Bapak/Ibu:
-      </p>
-      <!-- Info Card -->
-      <table width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:2px solid #86efac;border-radius:12px;margin:0 0 25px;">
-        <tr>
-          <td style="padding:24px;">
-            <table width="100%" cellpadding="0" cellspacing="0">
-              <tr>
-                <td style="color:#6b7280;font-size:12px;padding:6px 0;text-transform:uppercase;letter-spacing:1px;">Nama Calon Peserta Didik</td>
-              </tr>
-              <tr>
-                <td style="color:#047857;font-size:22px;font-weight:900;padding:0 0 16px;letter-spacing:0.5px;">${nama}</td>
-              </tr>
-              <tr>
-                <td style="padding:14px 0 0;border-top:2px dashed #86efac;text-align:center;">
-                  <span style="background:#059669;color:#ffffff;padding:10px 24px;border-radius:24px;font-size:14px;font-weight:800;letter-spacing:1px;display:inline-block;">🎓 DITERIMA</span>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
-      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 20px;">
-        telah <b style="color:#059669;">DITERIMA</b> sebagai calon peserta didik baru di <b>${schoolName}</b> Tahun Ajaran ${year}.
-      </p>
-      <!-- Action Required -->
-      <table width="100%" cellpadding="0" cellspacing="0" style="background:#fefce8;border-left:4px solid #eab308;border-radius:0 8px 8px 0;margin:0 0 25px;">
-        <tr>
-          <td style="padding:16px 20px;">
-            <p style="color:#854d0e;font-size:13px;margin:0;line-height:1.7;">
-              <b>⚠️ Langkah Selanjutnya:</b><br>
-              Silakan lakukan <b>daftar ulang</b> sesuai jadwal yang telah ditentukan dengan membawa berkas fisik yang diperlukan. Informasi lebih lanjut akan disampaikan melalui portal SPMB.
-            </p>
-          </td>
-        </tr>
-      </table>
-      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0;">
-        Selamat dan terima kasih atas kepercayaan Bapak/Ibu.<br><br>
-        Wassalamu'alaikum Wr. Wb.
-      </p>
-    </td>
-  </tr>
-  <!-- Footer -->
-  <tr>
-    <td style="background:#f9fafb;padding:24px 30px;border-top:1px solid #e5e7eb;text-align:center;">
-      <p style="color:#9ca3af;font-size:11px;margin:0 0 4px;">Panitia SPMB ${schoolName}</p>
-      <p style="color:#d1d5db;font-size:10px;margin:0;">Email ini dikirim otomatis oleh sistem. Mohon tidak membalas email ini.</p>
-    </td>
-  </tr>
-</table>
-</body>
-</html>`,
-    };
-  }
+// ─────────────────────────────────────────────
+// EMAIL TEMPLATES
+// ─────────────────────────────────────────────
 
-  if (status === "Ditolak") {
-    return {
-      subject: `📢 Pengumuman Hasil Seleksi — ${nama} | SPMB ${schoolName}`,
-      html: `
-<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#fef2f2;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
-  <!-- Header -->
-  <tr>
-    <td style="background:linear-gradient(135deg,#64748b,#475569,#334155);padding:40px 30px;text-align:center;">
-      <div style="font-size:48px;margin-bottom:12px;">📢</div>
-      <h1 style="color:#ffffff;font-size:22px;margin:0 0 8px;font-weight:800;">PENGUMUMAN HASIL SELEKSI</h1>
-      <p style="color:rgba(255,255,255,0.9);font-size:13px;margin:0;letter-spacing:1px;">SPMB ${schoolName} — T.A. ${year}</p>
-    </td>
-  </tr>
-  <!-- Body -->
-  <tr>
-    <td style="padding:35px 30px;">
-      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 20px;">
-        Assalamu'alaikum Wr. Wb.<br><br>
-        Yth. Bapak/Ibu <b>${namaOrtu}</b>,
+function emailTahap2(nama: string, namaOrtu: string): { subject: string; html: string } {
+  const body = `
+    ${buildHeader("📋", "BERKAS DIVERIFIKASI")}
+    <tr><td style="padding:32px 28px;">
+      ${buildGreeting(namaOrtu)}
+      <p style="color:#475569; font-size:15px; line-height:1.8; margin:0 0 20px;">
+        Kami dengan senang hati memberitahukan bahwa berkas pendaftaran putra/putri Bapak/Ibu:
       </p>
-      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 25px;">
-        Setelah melalui proses seleksi, dengan berat hati kami sampaikan bahwa:
+      ${buildStudentCard(nama, "#dcfce7", "#059669", "✅ STATUS: TAHAP 2 — VERIFIKASI BERKAS")}
+      <p style="color:#475569; font-size:15px; line-height:1.8; margin:0 0 20px;">
+        telah <strong style="color:#059669;">berhasil diverifikasi</strong> oleh panitia SPMB dan kini memasuki <strong>Tahap 2</strong>. Silakan menunggu pengumuman hasil seleksi akhir.
       </p>
-      <!-- Info Card -->
-      <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border:2px solid #e5e7eb;border-radius:12px;margin:0 0 25px;">
-        <tr>
-          <td style="padding:20px 24px;">
-            <table width="100%" cellpadding="0" cellspacing="0">
-              <tr>
-                <td style="color:#6b7280;font-size:12px;padding:6px 0;text-transform:uppercase;letter-spacing:1px;">Nama Calon Peserta Didik</td>
-              </tr>
-              <tr>
-                <td style="color:#374151;font-size:20px;font-weight:800;padding:0 0 12px;letter-spacing:0.5px;">${nama}</td>
-              </tr>
-              <tr>
-                <td style="padding:12px 0 0;border-top:1px dashed #e5e7eb;">
-                  <span style="background:#fee2e2;color:#dc2626;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;">Belum Dapat Diterima</span>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
-      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 20px;">
-        <b>belum dapat diterima</b> sebagai peserta didik baru di ${schoolName} untuk Tahun Ajaran ${year}. Keputusan ini diambil berdasarkan pertimbangan kuota dan kriteria seleksi yang berlaku.
-      </p>
-      <!-- Encouragement -->
-      <table width="100%" cellpadding="0" cellspacing="0" style="background:#eff6ff;border-left:4px solid #3b82f6;border-radius:0 8px 8px 0;margin:0 0 25px;">
-        <tr>
-          <td style="padding:16px 20px;">
-            <p style="color:#1e40af;font-size:13px;margin:0;line-height:1.6;">
-              <b>💙 Pesan dari Kami:</b><br>
-              Kami mengapresiasi ketertarikan Bapak/Ibu terhadap ${schoolName}. Semoga putra/putri Bapak/Ibu mendapatkan tempat terbaik di sekolah lain dan sukses selalu dalam pendidikannya.
-            </p>
-          </td>
-        </tr>
-      </table>
-      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0;">
-        Terima kasih atas pengertian dan kepercayaan Bapak/Ibu.<br><br>
-        Wassalamu'alaikum Wr. Wb.
-      </p>
-    </td>
-  </tr>
-  <!-- Footer -->
-  <tr>
-    <td style="background:#f9fafb;padding:24px 30px;border-top:1px solid #e5e7eb;text-align:center;">
-      <p style="color:#9ca3af;font-size:11px;margin:0 0 4px;">Panitia SPMB ${schoolName}</p>
-      <p style="color:#d1d5db;font-size:10px;margin:0;">Email ini dikirim otomatis oleh sistem. Mohon tidak membalas email ini.</p>
-    </td>
-  </tr>
-</table>
-</body>
-</html>`,
-    };
-  }
+      ${buildInfoBox("ℹ️", "Informasi Selanjutnya:", `Pantau terus status pendaftaran melalui portal SPMB di <strong>${PORTAL_URL}</strong>. Pengumuman seleksi akhir akan segera diinformasikan.`, "#eff6ff", "#3b82f6", "#1e40af")}
+      ${buildClosing("Terima kasih atas kepercayaan Bapak/Ibu.<br><br>")}
+    </td></tr>
+    ${buildFooter()}`;
 
-  // Default fallback (Tahap 1 — no email needed normally)
   return {
-    subject: `📋 Update Status Pendaftaran — ${nama} | SPMB ${schoolName}`,
+    subject: `✅ Berkas Terverifikasi — ${nama} | SPMB ${SCHOOL_NAME} ${SCHOOL_YEAR}`,
+    html: wrapEmail(body),
+  };
+}
+
+function emailDiterima(nama: string, namaOrtu: string): { subject: string; html: string } {
+  const body = `
+    ${buildHeader("🎓", "SELAMAT! PESERTA DITERIMA")}
+    <tr><td style="padding:32px 28px;">
+      ${buildGreeting(namaOrtu)}
+      <p style="color:#475569; font-size:15px; line-height:1.8; margin:0 0 20px;">
+        Dengan penuh rasa syukur, kami menyampaikan kabar gembira bahwa putra/putri Bapak/Ibu:
+      </p>
+      ${buildStudentCard(nama, "#dcfce7", "#059669", "🎉 DITERIMA SEBAGAI PESERTA DIDIK BARU")}
+      <p style="color:#475569; font-size:15px; line-height:1.8; margin:0 0 20px;">
+        telah resmi <strong style="color:#059669;">DITERIMA</strong> sebagai Calon Peserta Didik Baru di <strong style="color:#1e293b;">${SCHOOL_NAME}</strong> Tahun Ajaran ${SCHOOL_YEAR}. Ini merupakan awal dari perjalanan pendidikan yang luar biasa!
+      </p>
+      ${buildInfoBox("⚠️", "Tindak Lanjut — Daftar Ulang:", "Silakan lakukan <strong>daftar ulang</strong> sesuai jadwal yang ditetapkan dengan membawa seluruh berkas fisik. Informasi lebih lanjut dapat dilihat di portal SPMB.", "#fefce8", "#eab308", "#854d0e")}
+      ${buildInfoBox("📱", "Cek Status Online:", `Pantau informasi terbaru di <strong>${PORTAL_URL}</strong>`, "#f0fdf4", "#10b981", "#065f46")}
+      ${buildClosing("Selamat dan semoga putra/putri Bapak/Ibu sukses dalam menempuh pendidikan.<br><br>")}
+    </td></tr>
+    ${buildFooter()}`;
+
+  return {
+    subject: `🎉 SELAMAT! ${nama} DITERIMA di ${SCHOOL_NAME} — SPMB ${SCHOOL_YEAR}`,
+    html: wrapEmail(body),
+  };
+}
+
+function emailDitolak(nama: string, namaOrtu: string): { subject: string; html: string } {
+  const body = `
+    ${buildHeader("📢", "PENGUMUMAN HASIL SELEKSI")}
+    <tr><td style="padding:32px 28px;">
+      ${buildGreeting(namaOrtu)}
+      <p style="color:#475569; font-size:15px; line-height:1.8; margin:0 0 20px;">
+        Setelah melalui proses seleksi yang ketat, dengan penuh hormat kami sampaikan bahwa:
+      </p>
+      ${buildStudentCard(nama, "#f1f5f9", "#64748b", "📋 Belum Dapat Diterima pada Seleksi Ini")}
+      <p style="color:#475569; font-size:15px; line-height:1.8; margin:0 0 20px;">
+        <strong style="color:#1e293b;">${nama}</strong> belum dapat kami terima sebagai peserta didik baru di <strong style="color:#1e293b;">${SCHOOL_NAME}</strong> untuk Tahun Ajaran ${SCHOOL_YEAR}. Keputusan ini didasarkan pada kuota dan kriteria seleksi yang berlaku.
+      </p>
+      ${buildInfoBox("💙", "Pesan dari Kami:", "Kami sangat mengapresiasi antusias dan kepercayaan Bapak/Ibu. Semoga putra/putri Bapak/Ibu mendapatkan tempat terbaik di sekolah lain dan sukses selalu.", "#eff6ff", "#3b82f6", "#1e40af")}
+      ${buildClosing("Terima kasih atas pengertian dan kepercayaan Bapak/Ibu.<br><br>")}
+    </td></tr>
+    ${buildFooter()}`;
+
+  return {
+    subject: `📢 Pengumuman Hasil Seleksi SPMB — ${nama} | ${SCHOOL_NAME}`,
+    html: wrapEmail(body),
+  };
+}
+
+function getEmailHTML(status: string, nama: string, namaOrtu: string): { subject: string; html: string } {
+  if (status === "Tahap 2") return emailTahap2(nama, namaOrtu);
+  if (status === "Diterima") return emailDiterima(nama, namaOrtu);
+  if (status === "Ditolak") return emailDitolak(nama, namaOrtu);
+  return {
+    subject: `📋 Update Status — ${nama} | SPMB ${SCHOOL_NAME}`,
     html: `<p>Status pendaftaran ${nama} telah diubah menjadi: ${status}</p>`,
   };
 }
+
+// ─────────────────────────────────────────────
+// API ROUTE HANDLERS
+// ─────────────────────────────────────────────
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -269,7 +200,6 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { email, nama, namaOrtu, status } = body;
 
-    // Validate required fields
     if (!email || !nama || !status) {
       return Response.json(
         { error: "Missing required fields: email, nama, status" },
@@ -277,7 +207,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Only send for Tahap 2, Diterima, Ditolak
     if (!["Tahap 2", "Diterima", "Ditolak"].includes(status)) {
       return Response.json(
         { message: "No email sent for this status" },
@@ -285,14 +214,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const { subject, html } = getEmailHTML(
-      status,
-      nama,
-      namaOrtu || "Orang Tua/Wali"
-    );
+    const { subject, html } = getEmailHTML(status, nama, namaOrtu || "Orang Tua/Wali");
 
     const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || "SPMB SDN 02 Cibadak <onboarding@resend.dev>",
+      from: process.env.RESEND_FROM_EMAIL || `SPMB ${SCHOOL_NAME} <onboarding@resend.dev>`,
       to: [email],
       subject,
       html,
@@ -304,12 +229,10 @@ export async function POST(request: Request) {
     }
 
     return Response.json({ success: true, id: data?.id }, { headers: corsHeaders });
-  } catch (err: any) {
-    console.error("Email API error:", err);
-    return Response.json(
-      { error: err?.message || "Internal server error" },
-      { status: 500, headers: corsHeaders }
-    );
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Internal server error";
+    console.error("Email API error:", message);
+    return Response.json({ error: message }, { status: 500, headers: corsHeaders });
   }
 }
 
@@ -317,4 +240,3 @@ export async function POST(request: Request) {
 export async function OPTIONS() {
   return new Response(null, { status: 204, headers: corsHeaders });
 }
-
