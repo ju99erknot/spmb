@@ -307,8 +307,8 @@ function ResultCard({ result, onReset, onReprint, onEdit }: { result: any; onRes
                     <span className="text-[11px] text-red-600 font-bold flex justify-center items-center gap-1.5 mb-1.5">
                       <Clock className="w-3.5 h-3.5" /> JADWAL DAFTAR ULANG:
                     </span>
-                    <b className="text-[13px] text-slate-800 block">Selasa - Jumat, 02 - 05 Juni 2026</b>
-                    <span className="text-[10px] text-slate-500 mt-0.5 block">Pukul 08.00 - 10.00 WIB (Di Ruang Panitia)</span>
+                    <b className="text-[13px] text-slate-800 block">Senin - Jumat, 15 - 19 Juni 2026</b>
+                    <span className="text-[10px] text-slate-500 mt-0.5 block">Pukul 08.00 - 11.00 WIB (Di Ruang Panitia)</span>
                   </div>
 
                   <div className="text-left border border-slate-200 p-0 text-[11px] leading-relaxed bg-white rounded-xl overflow-hidden shadow-sm mb-5">
