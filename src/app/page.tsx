@@ -84,7 +84,10 @@ export default function HomePage() {
   // If not active, show the dark sci-fi StatusCurtain which blocks everything
   // BUT allow QR verification links (?v=) to bypass the curtain
   if (portalStatus !== "ACTIVE" && !hasVerifParam) {
-    return <StatusCurtain status={portalStatus} />;
+    const isAnnouncement = stats.total > 0 || (settings.jadwalBuka && settings.jadwalTutup
+      ? new Date(settings.jadwalBuka).getTime() >= new Date(settings.jadwalTutup).getTime()
+      : false);
+    return <StatusCurtain status={portalStatus} isAnnouncement={isAnnouncement} />;
   }
 
   return (

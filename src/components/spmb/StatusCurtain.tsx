@@ -7,9 +7,10 @@ import { usePortalSettings } from "@/hooks/usePortalSettings";
 
 interface StatusCurtainProps {
   status: "MAINTENANCE" | "BEFORE_OPEN" | "CLOSED";
+  isAnnouncement?: boolean;
 }
 
-export function StatusCurtain({ status }: StatusCurtainProps) {
+export function StatusCurtain({ status, isAnnouncement = false }: StatusCurtainProps) {
   const { settings } = usePortalSettings();
 
   const targetDate = settings.jadwalBuka ? new Date(settings.jadwalBuka) : null;
@@ -28,13 +29,21 @@ export function StatusCurtain({ status }: StatusCurtainProps) {
   const isMaintenance = status === "MAINTENANCE";
 
   const title = isMaintenance ? "SISTEM DIPERBAIKI" : "OFFICIAL SPMB 2026";
-  const subtitle = isMaintenance ? "MAINTENANCE" : (status === "BEFORE_OPEN" ? "SEGERA DIBUKA" : "DITUTUP");
+  const subtitle = isMaintenance
+    ? "MAINTENANCE"
+    : status === "BEFORE_OPEN"
+      ? (isAnnouncement ? "HASIL SELEKSI" : "SEGERA DIBUKA")
+      : "DITUTUP";
   const strokeColor = isMaintenance ? "#f59e0b" : "#0ea5e9";
   const description = isMaintenance
     ? "Sistem Pendaftaran sedang dinonaktifkan sementara waktu oleh administrator untuk keperluan perbaikan. Silakan kembali lagi nanti."
-    : (status === "BEFORE_OPEN"
-      ? "Penerimaan Siswa Baru SDN 02 Cibadak segera dibuka. Sistem akan otomatis terbuka setelah hitung mundur selesai. Harap bersabar."
-      : "Pendaftaran Siswa Baru SDN 02 Cibadak Tahun Ajaran 2026 telah ditutup. Terima kasih atas partisipasi Anda.");
+    : status === "BEFORE_OPEN"
+      ? isAnnouncement
+        ? "Pengumuman Hasil Seleksi Penerimaan Siswa Baru SDN 02 Cibadak segera dibuka. Sistem akan otomatis terbuka setelah hitung mundur selesai. Harap bersabar."
+        : "Penerimaan Siswa Baru SDN 02 Cibadak segera dibuka. Sistem akan otomatis terbuka setelah hitung mundur selesai. Harap bersabar."
+      : isAnnouncement
+        ? "Pengumuman Hasil Seleksi Penerimaan Siswa Baru SDN 02 Cibadak telah ditutup. Terima kasih atas partisipasi Anda."
+        : "Pendaftaran Siswa Baru SDN 02 Cibadak Tahun Ajaran 2026 telah ditutup. Terima kasih atas partisipasi Anda.";
 
   return (
     <div className="fixed inset-0 z-[999999] bg-[#030308] text-[#f8fafc] font-sans overflow-hidden flex items-center justify-center">

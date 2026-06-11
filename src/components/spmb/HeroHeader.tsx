@@ -19,19 +19,25 @@ export function HeroHeader() {
   let targetDate = new Date();
   let countdownLabel = "Batas Waktu Pendaftaran";
 
+  const isAnnouncement =
+    stats.total > 0 ||
+    (settings.jadwalBuka && settings.jadwalTutup
+      ? new Date(settings.jadwalBuka).getTime() >= new Date(settings.jadwalTutup).getTime()
+      : false);
+
   if (settings.jadwalBuka && settings.jadwalTutup) {
     const bukaTime = new Date(settings.jadwalBuka).getTime();
     const tutupTime = new Date(settings.jadwalTutup).getTime();
 
     if (nowMillis < bukaTime) {
       targetDate = new Date(settings.jadwalBuka);
-      countdownLabel = "Portal Segera Dibuka";
+      countdownLabel = isAnnouncement ? "Pengumuman Hasil Seleksi" : "Portal Segera Dibuka";
     } else if (nowMillis > tutupTime) {
       targetDate = new Date(settings.jadwalTutup); // Expired
-      countdownLabel = "Pendaftaran Ditutup";
+      countdownLabel = isAnnouncement ? "Pengumuman Ditutup" : "Pendaftaran Ditutup";
     } else {
       targetDate = new Date(settings.jadwalTutup);
-      countdownLabel = "Batas Waktu Pendaftaran";
+      countdownLabel = isAnnouncement ? "Batas Waktu Pengumuman" : "Batas Waktu Pendaftaran";
     }
   }
 
